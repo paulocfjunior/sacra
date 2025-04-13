@@ -1,93 +1,70 @@
 import React, { useState } from 'react';
 import ParallelViewer from './ParallelViewer';
 import VersionSelector from './VersionSelector';
-
-const SAMPLE_BOOKS = ['Genesis', 'John'];
-const SAMPLE_CHAPTERS = ['1', '2', '3'];
-const SAMPLE_VERSES = ['1', '2', '3', '16'];
-
-interface Selection {
-  book: string;
-  chapter: string;
-  verses: string[];
-}
+import { parseReference, BibleReference } from '../lib/bibleRefs';
 
 export default function VerseSelector() {
-  const [selection, setSelection] = useState<Selection>({
-    book: SAMPLE_BOOKS[0],
-    chapter: SAMPLE_CHAPTERS[0],
-    verses: [SAMPLE_VERSES[0]],
-  });
-
+  const [reference, setReference] = useState('');
+  const [parsedRef, setParsedRef] = useState<BibleReference | null>(null);
+  const [error, setError] = useState('');
   const [activeVersions, setActiveVersions] = useState<string[]>([]);
   const [showComparison, setShowComparison] = useState(false);
 
+  const handleReferenceSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const parsed = parseReference(reference);
+    
+    if (!parsed) {
+      setError('Referência inválida. Exemplo: "gen 1:1" ou "john 3:16-18"');
+      setParsedRef(null);
+      setShowComparison(false);
+      return;
+    }
+
+    setError('');
+    setParsedRef(parsed);
+    setShowComparison(true);
+  };
+
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Book</label>
-          <select 
-            className="w-full border rounded p-2"
-            value={selection.book}
-            onChange={(e) => setSelection(prev => ({ ...prev, book: e.target.value }))}
-          >
-            {SAMPLE_BOOKS.map(book => (
-              <option key={book} value={book}>{book}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Chapter</label>
-          <select 
-            className="w-full border rounded p-2"
-            value={selection.chapter}
-            onChange={(e) => setSelection(prev => ({ ...prev, chapter: e.target.value }))}
-          >
-            {SAMPLE_CHAPTERS.map(chapter => (
-              <option key={chapter} value={chapter}>{chapter}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium">Verses (select multiple)</label>
-        <select 
-          className="w-full border rounded p-2"
-          multiple
-          value={selection.verses}
-          onChange={(e) => setSelection(prev => ({ 
-            ...prev, 
-            verses: Array.from(e.target.selectedOptions).map(opt => opt.value)
-          }))}
-        >
-          {SAMPLE_VERSES.map(verse => (
-            <option key={verse} value={verse}>{verse}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium">Bible Versions</label>
+      <div className="space-y-4">
+        <h3 className="font-medium">1. Selecione as versões para comparar</h3>
         <VersionSelector
           activeVersions={activeVersions}
           onVersionsChange={setActiveVersions}
         />
       </div>
 
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-        onClick={() => setShowComparison(true)}
-        disabled={activeVersions.length === 0}
-      >
-        Ver comparativo
-      </button>
+      <div className="space-y-4">
+        <h3 className="font-medium">2. Digite a referência bíblica</h3>
+        <form onSubmit={handleReferenceSubmit} className="space-y-2">
+          <input
+            type="text"
+            className="w-full border rounded p-2"
+            placeholder='Ex: "gen 1:1" ou "john 3:16-18"'
+            value={reference}
+            onChange={(e) => setReference(e.target.value)}
+          />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+            disabled={!reference.trim() || activeVersions.length === 0}
+          >
+            Buscar versículos
+          </button>
+        </form>
+      </div>
 
-      {showComparison && activeVersions.length > 0 && (
+      {showComparison && parsedRef && (
         <div className="mt-8">
-          <ParallelViewer {...selection} versions={activeVersions} />
+          <ParallelViewer
+            book={parsedRef.book}
+            chapter={parsedRef.chapter}
+            verses={parsedRef.verses}
+            versions={activeVersions}
+          />
         </div>
       )}
     </div>
