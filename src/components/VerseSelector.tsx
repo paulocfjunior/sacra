@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import ParallelViewer from './ParallelViewer';
+import VersionSelector from './VersionSelector';
 
 const SAMPLE_BOOKS = ['Genesis', 'John'];
 const SAMPLE_CHAPTERS = ['1', '2', '3'];
 const SAMPLE_VERSES = ['1', '2', '3', '16'];
-const AVAILABLE_VERSIONS = ['KJV', 'ARC'];
 
 interface Selection {
   book: string;
   chapter: string;
   verses: string[];
-  versions: string[];
 }
 
 export default function VerseSelector() {
@@ -18,14 +17,14 @@ export default function VerseSelector() {
     book: SAMPLE_BOOKS[0],
     chapter: SAMPLE_CHAPTERS[0],
     verses: [SAMPLE_VERSES[0]],
-    versions: [AVAILABLE_VERSIONS[0], AVAILABLE_VERSIONS[1]],
   });
 
+  const [activeVersions, setActiveVersions] = useState<string[]>([]);
   const [showComparison, setShowComparison] = useState(false);
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className="block text-sm font-medium">Book</label>
           <select 
@@ -51,23 +50,6 @@ export default function VerseSelector() {
             ))}
           </select>
         </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Versions (select multiple)</label>
-          <select 
-            className="w-full border rounded p-2"
-            multiple
-            value={selection.versions}
-            onChange={(e) => setSelection(prev => ({ 
-              ...prev, 
-              versions: Array.from(e.target.selectedOptions).map(opt => opt.value)
-            }))}
-          >
-            {AVAILABLE_VERSIONS.map(version => (
-              <option key={version} value={version}>{version}</option>
-            ))}
-          </select>
-        </div>
       </div>
 
       <div className="space-y-2">
@@ -87,16 +69,25 @@ export default function VerseSelector() {
         </select>
       </div>
 
+      <div className="space-y-2">
+        <label className="block text-sm font-medium">Bible Versions</label>
+        <VersionSelector
+          activeVersions={activeVersions}
+          onVersionsChange={setActiveVersions}
+        />
+      </div>
+
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
         onClick={() => setShowComparison(true)}
+        disabled={activeVersions.length === 0}
       >
         Ver comparativo
       </button>
 
-      {showComparison && (
+      {showComparison && activeVersions.length > 0 && (
         <div className="mt-8">
-          <ParallelViewer {...selection} />
+          <ParallelViewer {...selection} versions={activeVersions} />
         </div>
       )}
     </div>
