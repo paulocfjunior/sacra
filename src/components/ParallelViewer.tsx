@@ -1,4 +1,4 @@
-import { useBible } from '../hooks/useBible';
+import { useBible } from '../contexts/BibleContext';
 
 interface Props {
   book: string;

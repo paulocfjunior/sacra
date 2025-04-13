@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useBible } from '../hooks/useBible';
+import { useBible } from '../contexts/BibleContext';
 
 interface Props {
   activeVersions: string[];

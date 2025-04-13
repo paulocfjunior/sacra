@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
-type BibleData = Record<string, Record<string, Record<string, string>>>;
+type BibleData = string[][];
 
 interface BibleContextType {
   versions: Record<string, BibleData>;
@@ -48,7 +48,21 @@ export function BibleProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const getVerse = useCallback((version: string, book: string, chapter: number, verse: number) => {
-    return versions?.[version]?.[book]?.[chapter]?.[verse] || '';
+    try {
+      const versionData = versions[version];
+      if (!versionData) return '';
+
+      // In this format, chapters are arrays of verses
+      const chapterIndex = chapter - 1;
+      const verseIndex = verse - 1;
+
+      if (!versionData[chapterIndex]) return '';
+      
+      return versionData[chapterIndex][verseIndex] || '';
+    } catch (error) {
+      console.error('Error getting verse:', { version, book, chapter, verse, error });
+      return '';
+    }
   }, [versions]);
 
   return (
