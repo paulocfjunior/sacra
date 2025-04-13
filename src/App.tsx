@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useBible } from './hooks/useBible';
-import ParallelViewer from './components/ParallelViewer';
+import VerseSelector from './components/VerseSelector';
 
 export default function App() {
   const { loadVersion } = useBible();
@@ -20,13 +20,7 @@ export default function App() {
       <h1 className="text-3xl font-bold mb-4">Bible Study App (Open Core)</h1>
       <p className="mb-8">Welcome! This is the base layout for reading, comparing, and annotating the Bible offline.</p>
       
-      <ParallelViewer
-        book="John"
-        chapter="3"
-        verses={["16"]}
-        leftVersion="KJV"
-        rightVersion="ARC"
-      />
+      <VerseSelector />
     </div>
   );
 }
