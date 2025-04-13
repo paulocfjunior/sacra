@@ -10,8 +10,7 @@ interface Selection {
   book: string;
   chapter: string;
   verses: string[];
-  leftVersion: string;
-  rightVersion: string;
+  versions: string[];
 }
 
 export default function VerseSelector() {
@@ -19,15 +18,14 @@ export default function VerseSelector() {
     book: SAMPLE_BOOKS[0],
     chapter: SAMPLE_CHAPTERS[0],
     verses: [SAMPLE_VERSES[0]],
-    leftVersion: AVAILABLE_VERSIONS[0],
-    rightVersion: AVAILABLE_VERSIONS[1],
+    versions: [AVAILABLE_VERSIONS[0], AVAILABLE_VERSIONS[1]],
   });
 
   const [showComparison, setShowComparison] = useState(false);
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <div className="space-y-2">
           <label className="block text-sm font-medium">Book</label>
           <select 
@@ -55,24 +53,15 @@ export default function VerseSelector() {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium">Left Version</label>
+          <label className="block text-sm font-medium">Versions (select multiple)</label>
           <select 
             className="w-full border rounded p-2"
-            value={selection.leftVersion}
-            onChange={(e) => setSelection(prev => ({ ...prev, leftVersion: e.target.value }))}
-          >
-            {AVAILABLE_VERSIONS.map(version => (
-              <option key={version} value={version}>{version}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Right Version</label>
-          <select 
-            className="w-full border rounded p-2"
-            value={selection.rightVersion}
-            onChange={(e) => setSelection(prev => ({ ...prev, rightVersion: e.target.value }))}
+            multiple
+            value={selection.versions}
+            onChange={(e) => setSelection(prev => ({ 
+              ...prev, 
+              versions: Array.from(e.target.selectedOptions).map(opt => opt.value)
+            }))}
           >
             {AVAILABLE_VERSIONS.map(version => (
               <option key={version} value={version}>{version}</option>

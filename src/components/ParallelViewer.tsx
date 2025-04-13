@@ -5,31 +5,24 @@ interface Props {
   book: string;
   chapter: string;
   verses: string[];
-  leftVersion: string;
-  rightVersion: string;
+  versions: string[]; // ex: ["KJV", "ARC", "ASV"]
 }
 
-export default function ParallelViewer({ book, chapter, verses, leftVersion, rightVersion }: Props) {
+export default function ParallelViewer({ book, chapter, verses, versions }: Props) {
   const { getVerse } = useBible();
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div>
-        <h2 className="font-bold text-lg mb-2">{leftVersion}</h2>
-        {verses.map(v => (
-          <p key={v}>
-            <strong>{v}</strong> {getVerse(leftVersion, book, chapter, v)}
-          </p>
-        ))}
-      </div>
-      <div>
-        <h2 className="font-bold text-lg mb-2">{rightVersion}</h2>
-        {verses.map(v => (
-          <p key={v}>
-            <strong>{v}</strong> {getVerse(rightVersion, book, chapter, v)}
-          </p>
-        ))}
-      </div>
+    <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${versions.length}, 1fr)` }}>
+      {versions.map(version => (
+        <div key={version}>
+          <h2 className="font-bold text-lg mb-2">{version}</h2>
+          {verses.map(v => (
+            <p key={v}>
+              <strong>{v}</strong> {getVerse(version, book, chapter, v)}
+            </p>
+          ))}
+        </div>
+      ))}
     </div>
   );
 } 
