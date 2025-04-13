@@ -1,0 +1,83 @@
+{
+  "$schema": "https://raw.githubusercontent.com/getcursor/cursorrules/main/schema.json",
+  "projectName": "bible-study-app-core",
+  "description": "A Bible reading and study app that works offline, comparing multiple versions, supporting local IA via transformers.js, and organizing studies using IndexedDB.",
+  "goals": [
+    "Offline-first PWA for Bible reading and study",
+    "Read and compare multiple Bible versions side by side",
+    "Allow notes and structured study saving locally",
+    "Use local transformers.js for AI-based analysis and summaries",
+    "No user authentication (Open Core version)",
+    "Data storage is client-side only using IndexedDB and localStorage",
+    "All content must be translatable via i18next"
+  ],
+  "stack": {
+    "frontend": {
+      "framework": "React",
+      "language": "TypeScript",
+      "builder": "Vite",
+      "styles": "TailwindCSS",
+      "state": "Zustand",
+      "routing": "File-based or manual"
+    },
+    "local_ai": {
+      "library": "@xenova/transformers",
+      "execution": "browser-only (WASM/WebGPU)"
+    },
+    "data": {
+      "storage": "Dexie (IndexedDB wrapper)",
+      "sync": "Manual export/import only",
+      "translation": "i18next with JSON resources"
+    },
+    "testing": {
+      "framework": "Vitest + React Testing Library"
+    }
+  },
+  "rules": {
+    "code": {
+      "formatting": "Follow ESLint config (airbnb-style + Tailwind plugin)",
+      "testingRequired": true,
+      "i18nRequired": true,
+      "typescript": true
+    },
+    "folders": {
+      "useStrictStructure": true,
+      "preferredFolders": [
+        "src/components",
+        "src/hooks",
+        "src/lib",
+        "src/bible",
+        "src/ai",
+        "src/studies",
+        "src/i18n",
+        "src/store"
+      ]
+    },
+    "fileNaming": {
+      "case": "camelCase for functions, PascalCase for components"
+    }
+  },
+  "dependencies": {
+    "mustUse": [
+      "@xenova/transformers",
+      "dexie",
+      "zustand",
+      "tailwindcss",
+      "i18next",
+      "react-i18next"
+    ],
+    "mustAvoid": [
+      "Firebase",
+      "Supabase",
+      "Auth libraries",
+      "Node-specific APIs"
+    ]
+  },
+  "license": "Open Source - MIT (or similar)",
+  "notes": [
+    "Always prefer running logic client-side.",
+    "No backend is allowed in this Open Core version.",
+    "Do not use SSR or Node-only modules.",
+    "Every user-facing string must be wrapped in `t()` from i18next."
+  ]
+}
