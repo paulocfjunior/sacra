@@ -9,8 +9,27 @@ export default function App() {
   useEffect(() => {
     // Load versions only once when component mounts
     const loadVersions = async () => {
-      await loadVersion('KJV', '/bibles/KJF.json');
-      await loadVersion('ARC', '/bibles/ARC.json');
+      try {
+        // Portuguese versions
+        await loadVersion('ARC', '/bibles/ARC.json');  // Almeida Revista e Corrigida
+        await loadVersion('ARA', '/bibles/ARA.json');  // Almeida Revista e Atualizada
+        await loadVersion('ACF', '/bibles/ACF.json');  // Almeida Corrigida Fiel
+        await loadVersion('NAA', '/bibles/NAA.json');  // Nova Almeida Atualizada
+        await loadVersion('NVI', '/bibles/NVI.json');  // Nova Versão Internacional
+        await loadVersion('NTLH', '/bibles/NTLH.json'); // Nova Tradução na Linguagem de Hoje
+        await loadVersion('NVT', '/bibles/NVT.json');  // Nova Versão Transformadora
+        await loadVersion('AS21', '/bibles/AS21.json'); // Almeida Século 21
+
+        // English versions
+        await loadVersion('KJA', '/bibles/KJA.json');  // King James Atualizada
+        await loadVersion('KJF', '/bibles/KJF.json');  // King James Fiel
+
+        // Original languages
+        await loadVersion('Hebrew', '/bibles/hebrew.json');
+        await loadVersion('Greek', '/bibles/el_greek.json');
+      } catch (error) {
+        console.error('Error loading Bible versions:', error);
+      }
     };
     
     loadVersions();
