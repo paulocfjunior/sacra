@@ -62,7 +62,7 @@ export default function VerseSelector() {
           <ParallelViewer
             book={parsedRef.book}
             chapter={parsedRef.chapter}
-            verses={parsedRef.verses}
+            verses={parsedRef.verses || []}
             versions={activeVersions}
           />
         </div>

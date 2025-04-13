@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useBible } from '../hooks/useBible';
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
 }
 
 export default function VersionSelector({ activeVersions, onVersionsChange }: Props) {
-  const { availableVersions } = useBible();
+  const { availableVersions, loading, errors } = useBible();
   const [selectedVersion, setSelectedVersion] = useState('');
 
   // Filter out versions that are already active
@@ -24,13 +24,39 @@ export default function VersionSelector({ activeVersions, onVersionsChange }: Pr
     onVersionsChange(activeVersions.filter(v => v !== version));
   };
 
+  // Show loading state if any version is still loading
+  const isLoading = Object.values(loading).some(Boolean);
+
+  // Collect any errors
+  const errorMessages = Object.entries(errors)
+    .filter(([, error]) => error)
+    .map(([version, error]) => `${version}: ${error}`);
+
   return (
     <div className="space-y-4">
+      {isLoading && (
+        <div className="text-blue-600">
+          Carregando versões da Bíblia...
+        </div>
+      )}
+
+      {errorMessages.length > 0 && (
+        <div className="text-red-600">
+          <p>Erro ao carregar algumas versões:</p>
+          <ul className="list-disc list-inside">
+            {errorMessages.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="flex gap-2">
         <select
           className="flex-1 border rounded p-2"
           value={selectedVersion}
           onChange={(e) => setSelectedVersion(e.target.value)}
+          disabled={isLoading}
         >
           <option value="">Selecione uma versão...</option>
           {availableToAdd.map(version => (
@@ -40,7 +66,7 @@ export default function VersionSelector({ activeVersions, onVersionsChange }: Pr
         <button
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:opacity-50"
           onClick={handleAddVersion}
-          disabled={!selectedVersion}
+          disabled={!selectedVersion || isLoading}
         >
           Adicionar versão
         </button>
@@ -58,6 +84,7 @@ export default function VersionSelector({ activeVersions, onVersionsChange }: Pr
                 <button
                   className="text-red-500 hover:text-red-700"
                   onClick={() => handleRemoveVersion(version)}
+                  disabled={isLoading}
                 >
                   Remover
                 </button>

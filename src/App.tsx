@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { useBible } from './hooks/useBible';
+import { useBible, BibleProvider } from './contexts/BibleContext';
 import VerseSelector from './components/VerseSelector';
 import StudyManager from './components/StudyManager';
 
-export default function App() {
+function AppContent() {
   const { loadVersion } = useBible();
 
   useEffect(() => {
@@ -51,5 +51,13 @@ export default function App() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BibleProvider>
+      <AppContent />
+    </BibleProvider>
   );
 }

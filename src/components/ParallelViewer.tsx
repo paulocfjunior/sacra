@@ -1,10 +1,9 @@
-import React from 'react';
 import { useBible } from '../hooks/useBible';
 
 interface Props {
   book: string;
-  chapter: string;
-  verses: string[];
+  chapter: number;
+  verses: number[];
   versions: string[]; // ex: ["KJV", "ARC", "ASV"]
 }
 
