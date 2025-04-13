@@ -6,9 +6,14 @@ export default function App() {
   const { loadVersion } = useBible();
 
   useEffect(() => {
-    loadVersion('KJV', '/bibles/KJF.json');
-    loadVersion('ARC', '/bibles/ARC.json');
-  }, [loadVersion]);
+    // Load versions only once when component mounts
+    const loadVersions = async () => {
+      await loadVersion('KJV', '/bibles/KJF.json');
+      await loadVersion('ARC', '/bibles/ARC.json');
+    };
+    
+    loadVersions();
+  }, []); // Empty dependency array = only run on mount
 
   return (
     <div className="min-h-screen bg-white text-gray-900 p-4">
